@@ -5,7 +5,7 @@ type DebouncedFunction<T extends (...args: any[]) => void> = (...args: Parameter
 export const useDebounceFunction = <T extends (...args: any[]) => void>(
   func: T,
   wait: number,
-): DebouncedFunction<T> => {
+): [DebouncedFunction<T>, () => void] => {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const debouncedFunction = useCallback(
@@ -20,5 +20,12 @@ export const useDebounceFunction = <T extends (...args: any[]) => void>(
     [func, wait],
   );
 
-  return debouncedFunction;
+  const cleanup = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
+
+  return [debouncedFunction, cleanup];
 };
