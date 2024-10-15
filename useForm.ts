@@ -31,15 +31,23 @@ export function useForm<T extends Record<string, any>>(
     setErrors(prev => ({ ...prev, [key]: error }));
   }, 300);
 
-  const onChange = useCallback((key: keyof T, value: T[keyof T]) => {
-    setValues(prev => ({ ...prev, [key]: value }));
-    validateField(key, value);
-  }, []);
+  const onChange = useCallback(
+    (key: keyof T, value: T[keyof T]) => {
+      setValues(prev => ({ ...prev, [key]: value }));
+      if (errors[key]) {
+        validateField(key, value);
+      }
+    },
+    [errors],
+  );
 
-  const onBlur = useCallback((key: keyof T) => {
-    cleanup();
-    validateField(key, values[key]);
-  }, []);
+  const onBlur = useCallback(
+    (key: keyof T) => {
+      cleanup();
+      validateField(key, values[key]);
+    },
+    [values],
+  );
 
   const resetForm = useCallback(() => {
     setValues(initialValues);
