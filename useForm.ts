@@ -52,7 +52,7 @@ export function useForm<T extends Record<string, any>>(
   const resetForm = useCallback(() => {
     setValues(initialValues);
     setErrors({});
-  }, []);
+  }, [initialValues]);
 
   const isValid = Object.values(errors).every(error => !error);
 
